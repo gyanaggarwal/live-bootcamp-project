@@ -5,7 +5,7 @@ services:
     image: gyanaggarwal/app-service # specify name of image on Docker Hub
     restart: "always" # automatically restart container when server crashes
     environment: # set up environment variables
-      AUTH_SERVICE_IP: 76.164.122.40
+      AUTH_SERVICE_IP: 76.164.112.63
     ports:
       - "8000:8000" # expose port 8000 so that applications outside the container can connect to it 
     depends_on: # only run app-service after auth-service has started
