@@ -1,10 +1,18 @@
 use axum::Router;
 use axum::serve::Serve;
-use axum::response::IntoResponse;
+//use axum::response::IntoResponse;
 use axum::routing::post;
-use reqwest::StatusCode;
+//use reqwest::StatusCode;
 use tower_http::services::ServeDir;
 use std::error::Error;
+
+pub mod routes;
+
+use crate::routes::signup;
+use crate::routes::logout;
+use crate::routes::verify_2fa;
+use crate::routes::verify_token;
+use crate::routes::login;
 
 pub struct Application {
     server: Serve<Router, Router>,
@@ -21,11 +29,11 @@ impl Application {
         //let router= todo!();
         let router = Router::new()
                              .nest_service("/", ServeDir::new("assets"))
-                             .route("/login", post(Self::login))
-                             .route("/logout", post(Self::logout))
-                             .route("/verify-2fa", post(Self::verify_2fa))
-                             .route("/verify-token", post(Self::verify_token))
-                             .route("/signup", post(Self::signup));
+                             .route("/login", post(login))
+                             .route("/logout", post(logout))
+                             .route("/verify-2fa", post(verify_2fa))
+                             .route("/verify-token", post(verify_token))
+                             .route("/signup", post(signup));
                              
 
 
@@ -43,26 +51,6 @@ impl Application {
         Ok(app)
     }
 
-    pub async fn signup() -> impl IntoResponse {
-       StatusCode::OK.into_response()
-    }
-
-    pub async fn login() -> impl IntoResponse {
-        StatusCode::OK.into_response()
-    }
- 
-    pub async fn logout() -> impl IntoResponse {
-        StatusCode::OK.into_response()
-     }
- 
-    pub async fn verify_2fa() -> impl IntoResponse {
-        StatusCode::OK.into_response()
-    }
-
-    pub async fn verify_token() -> impl IntoResponse {
-        StatusCode::OK.into_response()
-    }
-  
     pub async fn run(self) -> Result<(), std::io::Error> {
         println!("listening on {}", &self.address);
         self.server.await

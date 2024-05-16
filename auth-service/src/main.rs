@@ -1,7 +1,6 @@
-//use axum::{response::Html, routing::get, Router};
 use auth_service::Application;
-
 #[tokio::main]
+
 async fn main() {
     let app = Application::build("0.0.0.0:3000")
         .await
@@ -9,5 +8,8 @@ async fn main() {
 
     app.run().await.expect("Failed to run app");
 }
+
+
+
 
 
