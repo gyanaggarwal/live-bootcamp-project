@@ -1,6 +1,5 @@
 use auth_service::Application;
 use uuid::Uuid;
-use serde_json::json;
 
 pub  struct TestApp {
     pub address: String,
