@@ -35,7 +35,7 @@ impl SignupRequest {
 }
 
 
-#[derive(Serialize, Debug, Deserialize)]
+#[derive(Serialize, Debug, Deserialize, PartialEq)]
 pub struct SignupResponse {
     pub message: String,
 }

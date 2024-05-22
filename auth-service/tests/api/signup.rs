@@ -2,7 +2,6 @@
 use crate::helpers::TestApp;
 use auth_service::routes::SignupResponse;
 
-/*
 #[tokio::test]
 async fn should_return_201_if_valid_input() {
     let app = TestApp::new().await;
@@ -28,7 +27,7 @@ async fn should_return_201_if_valid_input() {
         expected_response
     );
 }
-*/
+
 #[tokio::test]
 async fn should_return_422_if_malformed_input() {
     let app = TestApp::new().await;
