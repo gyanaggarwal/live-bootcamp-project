@@ -3,12 +3,17 @@ use tower_http::services::ServeDir;
 use std::error::Error;
 
 pub mod routes;
+pub mod services;
+pub mod domain;
+pub mod app_state;
 
 use crate::routes::signup;
 use crate::routes::logout;
 use crate::routes::verify_2fa;
 use crate::routes::verify_token;
 use crate::routes::login;
+
+use app_state::AppState;
 
 pub struct Application {
     server: Serve<Router, Router>,
@@ -18,7 +23,7 @@ pub struct Application {
 }
 
 impl Application {
-    pub async fn build(address: &str) -> Result<Self, Box<dyn Error>> {
+    pub async fn build(app_state: AppState, address: &str) -> Result<Self, Box<dyn Error>> {
         // Move the Router definition from `main.rs` to here.
         // Also, remove the `hello` route.
         // We don't need it at this point!
@@ -29,8 +34,8 @@ impl Application {
                              .route("/logout", post(logout))
                              .route("/verify-2fa", post(verify_2fa))
                              .route("/verify-token", post(verify_token))
-                             .route("/signup", post(signup));
-                             
+                             .route("/signup", post(signup))
+                             .with_state(app_state);
 
 
         let listener = tokio::net::TcpListener::bind(address).await?;
