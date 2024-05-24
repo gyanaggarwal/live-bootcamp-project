@@ -1,16 +1,18 @@
 use std::error::Error;
-use app_state::AppState;
+use serde::{Deserialize, Serialize};
+use tower_http::services::ServeDir;
+
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
     routing::post,
     serve::Serve,
-    Json, Router,
+    Json, 
+    Router
 };
+use app_state::AppState;
 use domain::AuthAPIError;
 use routes::{login, logout, signup, verify_2fa, verify_token};
-use serde::{Deserialize, Serialize};
-use tower_http::services::ServeDir;
 
 pub mod app_state;
 pub mod domain;
