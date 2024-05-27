@@ -13,7 +13,7 @@ pub async fn signup(State(state): State<AppState>,
         Email::parse(request.email.clone()).map_err(|_| AuthAPIError::InvalidCredentials)?;
     let password =
         Password::parse(request.password.clone()).map_err(|_| AuthAPIError::InvalidCredentials)?;
-
+ 
     let user = User::new(email, password, request.requires_2fa);
 
     let mut user_store = state.user_store.write().await;
