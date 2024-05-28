@@ -1,25 +1,46 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
+use axum_extra::extract::CookieJar;
 use serde::Deserialize;
 
 use crate::{
     app_state::AppState,
-    domain::{AuthAPIError, Email, Password}};
+    domain::{AuthAPIError, Email, Password},
+    utils::auth::generate_auth_cookie};
 
 pub async fn login(State(state): State<AppState>,
+                   jar: CookieJar,
                    Json(request): Json<LoginRequest>) -> 
-                   Result<impl IntoResponse, AuthAPIError> {
-    let email =
-        Email::parse(request.email.clone()).map_err(|_| AuthAPIError::InvalidCredentials)?;
-    let password =
-        Password::parse(request.password.clone()).map_err(|_| AuthAPIError::InvalidCredentials)?;
-    
+                   (CookieJar, Result<impl IntoResponse, AuthAPIError>) {
+
+    let email = if let Ok(oemail) = Email::parse(request.email.clone()) {
+        oemail
+    } else {
+        return (jar, Err(AuthAPIError::InvalidCredentials));
+    };
+
+    let password = if let Ok(opassword) = Password::parse(request.password.clone()) {
+        opassword
+    } else {
+        return (jar, Err(AuthAPIError::InvalidCredentials));
+    };
+
     let user_store = state.user_store.write().await;
 
-    let _ = user_store.validate_user(&email, &password).await.map_err(|_| AuthAPIError::IncorrectCredentials)?;
-  
-    let _ = user_store.get_user(&email).await.map_err(|_| AuthAPIError::IncorrectCredentials)?; 
-    
-    Ok(StatusCode::OK.into_response())
+    if let Err(_) = user_store.validate_user(&email, &password).await {
+        return (jar, Err(AuthAPIError::IncorrectCredentials));
+    }
+
+    if let Err(_) = user_store.get_user(&email).await {
+        return (jar, Err(AuthAPIError::IncorrectCredentials));
+    }
+
+    let result = generate_auth_cookie(&email);
+    match result {
+        Ok(cookie) => {let updated_jar = jar.add(cookie);
+                                        (updated_jar, Ok(StatusCode::OK.into_response()))},
+
+        Err(_) =>  (jar, Err(AuthAPIError::UnexpectedError))
+    }
 }
 
 #[derive(Deserialize)]
