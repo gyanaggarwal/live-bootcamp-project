@@ -1,10 +1,12 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use crate::{
     app_state::AppState,
     domain::{AuthAPIError, Email, Password, User},
 };
+
+use crate::routes::RouteResponse;
 
 pub async fn signup(State(state): State<AppState>,
                     Json(request): Json<SignupRequest>) -> 
@@ -26,7 +28,7 @@ pub async fn signup(State(state): State<AppState>,
         return Err(AuthAPIError::UnexpectedError);
     }
 
-    let response = Json(SignupResponse {
+    let response = Json(RouteResponse {
         message: "User created successfully!".to_string(),
     });
 
@@ -39,9 +41,4 @@ pub struct SignupRequest {
     pub password: String,
     #[serde(rename = "requires2FA")]
     pub requires_2fa: bool,
-}
-
-#[derive(Serialize, Debug, Deserialize, PartialEq)]
-pub struct SignupResponse {
-    pub message: String,
 }
