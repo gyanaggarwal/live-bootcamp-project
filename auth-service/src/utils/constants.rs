@@ -24,3 +24,7 @@ pub const JWT_COOKIE_NAME: &str = "jwt";
 
 pub const TOKEN_TTL_SECONDS: i64 = 600; 
 
+pub mod prod {
+    pub const APP_ADDRESS: &str = "0.0.0.0:3000";
+}
+

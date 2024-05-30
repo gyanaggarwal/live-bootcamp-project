@@ -5,7 +5,8 @@ use serde::Deserialize;
 use crate::{
     app_state::AppState,
     domain::{AuthAPIError, Email, Password},
-    utils::auth::generate_auth_cookie};
+    utils::auth::generate_auth_cookie
+};
 
 pub async fn login(State(state): State<AppState>,
                    jar: CookieJar,

@@ -132,6 +132,7 @@ dependencies = [
  "cargo-modules",
  "chrono",
  "dotenvy",
+ "http 1.1.0",
  "jsonwebtoken",
  "lazy_static",
  "reqwest",
