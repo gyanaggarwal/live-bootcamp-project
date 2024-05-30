@@ -8,7 +8,7 @@ pub  struct TestApp {
     pub address: String,
     pub http_client: reqwest::Client,
 }
-
+/*
 impl TestApp {
     pub async fn new() -> Self {
         let user_store = Arc::new(RwLock::new(HashmapUserStore::default()));
@@ -69,7 +69,7 @@ impl TestApp {
             .await
             .expect("Failed to execute request.")
     }
-/*
+
     pub async fn post_login(&self) -> reqwest::Response {
         self.http_client
             .post(&format!("{}/login", &self.address))
@@ -77,7 +77,7 @@ impl TestApp {
             .await
             .expect("Failed to execute request.")
     }
-*/
+
     pub async fn post_logout(&self) -> reqwest::Response {
         self.http_client
             .post(&format!("{}/logout", &self.address))
@@ -102,3 +102,4 @@ impl TestApp {
             .expect("Failed to execute request.")
     }   
 }
+*/

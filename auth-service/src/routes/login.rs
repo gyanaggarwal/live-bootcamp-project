@@ -25,7 +25,7 @@ pub async fn login(State(state): State<AppState>,
         return (jar, Err(AuthAPIError::InvalidCredentials));
     };
 
-    let user_store = state.user_store.write().await;
+    let user_store = state.user_store.read().await;
 
     if let Err(_) = user_store.validate_user(&email, &password).await {
         return (jar, Err(AuthAPIError::IncorrectCredentials));
@@ -36,12 +36,14 @@ pub async fn login(State(state): State<AppState>,
     }
 
     let result = generate_auth_cookie(&email);
-    match result {
-        Ok(cookie) => {let updated_jar = jar.add(cookie);
-                                        (updated_jar, Ok(StatusCode::OK.into_response()))},
+    let auth_cookie = match result {
+        Ok(cookie) => cookie,
+        
+        Err(_) =>  return (jar, Err(AuthAPIError::UnexpectedError))
+    };
+    let updated_jar = jar.add(auth_cookie);
+    (updated_jar, Ok(StatusCode::OK.into_response()))
 
-        Err(_) =>  (jar, Err(AuthAPIError::UnexpectedError))
-    }
 }
 
 #[derive(Deserialize)]

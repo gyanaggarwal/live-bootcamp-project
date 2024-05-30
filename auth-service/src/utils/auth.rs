@@ -3,7 +3,8 @@ use chrono::Utc;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Validation};
 use serde::{Deserialize, Serialize};
 
-use crate::domain::email::Email;
+//use crate::domain::email::Email;
+use crate::{app_state::BannedTokenStoreType, domain::email::Email};
 
 use super::constants::{JWT_COOKIE_NAME, TOKEN_TTL_SECONDS, JWT_SECRET};
 // This is definitely NOT a good secret. We will update it soon!
@@ -66,7 +67,25 @@ fn create_token(claims: &Claims) -> Result<String, jsonwebtoken::errors::Error> 
     )
 }
 
-pub async fn validate_token(token: &str) -> Result<Claims, jsonwebtoken::errors::Error> {
+pub async fn validate_token(
+    token: &str,
+    banned_token_store: BannedTokenStoreType,
+) -> Result<Claims, jsonwebtoken::errors::Error> {
+    match banned_token_store.read().await.is_banned_token(token).await {
+        Ok(value) => {
+            if value {
+                return Err(jsonwebtoken::errors::Error::from(
+                    jsonwebtoken::errors::ErrorKind::InvalidToken,
+                ));
+            }
+        }
+        Err(_) => {
+            return Err(jsonwebtoken::errors::Error::from(
+                jsonwebtoken::errors::ErrorKind::InvalidToken,
+            ));
+        }
+    }
+
     decode::<Claims>(
         token,
         &DecodingKey::from_secret(JWT_SECRET.as_bytes()),

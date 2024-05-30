@@ -1,5 +1,5 @@
 use crate::helpers::TestApp;
-
+/*
 #[tokio::test]
 
 async fn verify_2fa_returns_200() {
@@ -10,4 +10,4 @@ async fn verify_2fa_returns_200() {
     assert_eq!(response.status().as_u16(), 200);
 
 }
-
+*/

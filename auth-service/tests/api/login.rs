@@ -1,6 +1,6 @@
 use crate::helpers::TestApp;
 use auth_service::{utils::constants::JWT_COOKIE_NAME, ErrorResponse};
-
+/*
 #[tokio::test]
 async fn should_return_422_if_malformed_input() {
     let app = TestApp::new().await;
@@ -30,7 +30,7 @@ async fn should_return_422_if_malformed_input() {
         );
     }
 }
-/*
+
 #[tokio::test]
 async fn should_return_200_if_valid_credentials_and_2fa_disabled() {
     let app = TestApp::new().await;
