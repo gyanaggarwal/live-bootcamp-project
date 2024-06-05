@@ -1,9 +1,6 @@
 #[derive(Debug, Clone, PartialEq)]
 pub struct Password(String);
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct Password2(String);
-
 impl Password {
     pub fn parse(s: String) -> Result<Password, String> {
         if validate_password(&s) {

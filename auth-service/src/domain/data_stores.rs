@@ -1,4 +1,4 @@
-use super::{Email, Password, User};
+use super::{Email, Password, User, LoginAttemptId, TwoFACode};
 
 #[async_trait::async_trait]
 pub trait UserStore {
@@ -13,6 +13,15 @@ pub trait BannedTokenStore {
     async fn is_banned_token(&self, token: &str) -> Result<bool, BannedTokenStoreError>;
 }
 
+#[async_trait::async_trait]
+pub trait TwoFACodeStore {
+    async fn add_two_fa_code(&mut self, 
+                             email: &Email, 
+                             login_attempt_id: LoginAttemptId, 
+                             two_fa_code: TwoFACode) -> Result<(), TwoFACodeStoreError>;
+    async fn get_two_fa_code(&self, email: &Email) -> Result<(LoginAttemptId, TwoFACode), TwoFACodeStoreError>;
+}
+
 #[derive(Debug, PartialEq)]
 pub enum UserStoreError {
     UserAlreadyExists,
@@ -23,5 +32,10 @@ pub enum UserStoreError {
 
 #[derive(Debug)]
 pub enum BannedTokenStoreError {
+    UnexpectedError
+}
+
+#[derive(Debug)]
+pub enum TwoFACodeStoreError {
     UnexpectedError
 }
