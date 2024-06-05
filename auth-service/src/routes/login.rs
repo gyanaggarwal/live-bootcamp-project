@@ -57,12 +57,22 @@ async fn handle_2fa(email: &Email, state: &AppState, jar: CookieJar) ->
         .is_err() 
     {
         return (jar, Err(AuthAPIError::UnexpectedError));
-
     }
+
+    if state.email_client
+        .read()
+        .await
+        .send_email(email, "2fa_code", two_fa_code.as_ref())
+        .await
+        .is_err() 
+    {
+        return (jar, Err(AuthAPIError::UnexpectedError));
+    }
+        
 
     let response = Json(LoginResponse::TwoFactorAuth(TwoFactorAuthResponse {
             message: "2FA required".to_owned(),
-            login_attempt_id: login_attempt_id.to_string(), // This is the issue
+            login_attempt_id: login_attempt_id.as_ref().to_owned() // This is the issue
     }));
     (jar, Ok((StatusCode::PARTIAL_CONTENT, response)))
 }
