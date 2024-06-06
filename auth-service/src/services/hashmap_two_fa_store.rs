@@ -24,5 +24,10 @@ impl TwoFACodeStore for HashmapTwoFACodeStore {
             Some(tcode) => Ok(tcode.clone()),
             None => Err(TwoFACodeStoreError::UnexpectedError)   
         }
-    }   
+    }  
+
+    async fn delete_two_fa_code(&mut self, email: &Email) -> Result<(), TwoFACodeStoreError> {
+        self.two_fa_codes.remove(email);
+        Ok(())
+    }
 }

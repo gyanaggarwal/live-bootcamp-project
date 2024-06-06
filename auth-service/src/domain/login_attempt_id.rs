@@ -8,6 +8,9 @@ impl LoginAttemptId {
     pub fn new() -> Self {
         Self( Uuid::new_v4().to_string())
     }
+    pub fn make(s:String) -> Self {
+        Self(s)
+    }
 }
 
 impl AsRef<str> for LoginAttemptId{

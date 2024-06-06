@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     app_state::AppState,
-    domain::{AuthAPIError, Email, Password, LoginAttemptId, TwoFACode, },
+    domain::{AuthAPIError, Email, Password, LoginAttemptId, TwoFACode},
     utils::auth::generate_auth_cookie
 };
 
@@ -67,8 +67,7 @@ async fn handle_2fa(email: &Email, state: &AppState, jar: CookieJar) ->
         .is_err() 
     {
         return (jar, Err(AuthAPIError::UnexpectedError));
-    }
-        
+    }  
 
     let response = Json(LoginResponse::TwoFactorAuth(TwoFactorAuthResponse {
             message: "2FA required".to_owned(),

@@ -9,6 +9,9 @@ impl TwoFACode {
         let mut rng = rand::thread_rng();
         Self(rng.gen_range(100000..=999999).to_string())
     }
+    pub fn make(s:String) -> Self {
+        Self(s)
+    }
 }
 
 impl AsRef<str> for TwoFACode {
