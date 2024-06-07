@@ -46,8 +46,8 @@ pub async fn login(State(state): State<AppState>,
 async fn handle_2fa(email: &Email, state: &AppState, jar: CookieJar) -> 
     (CookieJar, Result<(StatusCode, Json<LoginResponse>), AuthAPIError>) {
     
-    let login_attempt_id = LoginAttemptId::new();
-    let two_fa_code = TwoFACode::new();
+    let login_attempt_id = LoginAttemptId::default();
+    let two_fa_code = TwoFACode::default();
 
     if state.two_fa_code_store
         .write()

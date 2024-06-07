@@ -38,5 +38,6 @@ pub enum BannedTokenStoreError {
 
 #[derive(Debug)]
 pub enum TwoFACodeStoreError {
+    LoginAttamptIdNotFound,
     UnexpectedError
 }

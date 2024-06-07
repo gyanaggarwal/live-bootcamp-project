@@ -12,7 +12,7 @@ impl Password {
 }
 
 fn validate_password(s: &str) -> bool {
-    s.len() >= 8
+    s.chars().count() >= 8
 }
 
 impl AsRef<str> for Password {

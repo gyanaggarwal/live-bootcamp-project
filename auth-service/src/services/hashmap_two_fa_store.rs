@@ -22,12 +22,14 @@ impl TwoFACodeStore for HashmapTwoFACodeStore {
         Result<(LoginAttemptId, TwoFACode), TwoFACodeStoreError> {
         match self.two_fa_codes.get(email) {
             Some(tcode) => Ok(tcode.clone()),
-            None => Err(TwoFACodeStoreError::UnexpectedError)   
+            None => Err(TwoFACodeStoreError::LoginAttamptIdNotFound)   
         }
     }  
 
     async fn delete_two_fa_code(&mut self, email: &Email) -> Result<(), TwoFACodeStoreError> {
-        self.two_fa_codes.remove(email);
-        Ok(())
+        match self.two_fa_codes.remove(email) {
+            Some(_) => Ok(()),
+            None => Err(TwoFACodeStoreError::LoginAttamptIdNotFound)
+        }
     }
 }

@@ -16,8 +16,15 @@ pub async fn verify_2fa(State(state): State<AppState>,
         return (jar, Err(AuthAPIError::InvalidCredentials));
     };
 
-    let login_attempt_id = LoginAttemptId::make(request.login_attempt_id);
-    let two_fa_code = TwoFACode::make(request.two_fa_code);
+    let login_attempt_id = match LoginAttemptId::parse(request.login_attempt_id) {
+        Ok(laid) => laid,
+        Err(_) => return (jar, Err(AuthAPIError::InvalidLoginAttamptId))
+    };
+    
+    let two_fa_code = match TwoFACode::parse(request.two_fa_code) {
+        Ok(scode) => scode,
+        Err(_) => return (jar, Err(AuthAPIError::Invalid2FACode))
+    };
 
     let mut two_fa_code_store = state.two_fa_code_store.write().await;
     let result = two_fa_code_store.get_two_fa_code(&email).await;
