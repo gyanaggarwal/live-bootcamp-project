@@ -1,10 +1,9 @@
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
+use axum::{extract::State, response::IntoResponse, Json};
 use axum_extra::extract::CookieJar;
 use serde::Deserialize;
 use crate::{app_state::AppState,
             domain::{AuthAPIError, Email, LoginAttemptId, TwoFACode},
-            utils::auth::generate_auth_cookie,
-            routes::login::{LoginResponse, TwoFactorAuthResponse}};
+            utils::auth::generate_auth_cookie};
 
 pub async fn verify_2fa(State(state): State<AppState>,
                         jar: CookieJar,
@@ -50,13 +49,7 @@ pub async fn verify_2fa(State(state): State<AppState>,
     };
 
     let updated_jar = jar.add(auth_cookie);
-    let login_response = LoginResponse::TwoFactorAuth(TwoFactorAuthResponse{
-        message: "2FA required".to_owned(),
-        login_attempt_id: login_attempt_id.as_ref().to_owned()
-    });
-    let response = Json(login_response);
-
-    (updated_jar, Ok((StatusCode::OK, response)))
+    (updated_jar, Ok(()))
 }
 
 #[derive(Deserialize)]
