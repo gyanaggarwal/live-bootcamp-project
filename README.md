@@ -37,3 +37,4 @@ visit http://localhost:8000 and http://localhost:3000
 ## sudo apt-get update
 ## sudo apt-get install docker.io
 ## sudo apt-get install docker-compose
+## open -a Docker

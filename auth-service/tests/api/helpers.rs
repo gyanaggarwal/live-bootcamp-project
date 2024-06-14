@@ -3,7 +3,7 @@ use uuid::Uuid;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use auth_service::app_state::AppState;
-use auth_service::services::hashmap_user_store::HashmapUserStore;
+use auth_service::services::data_stores::hashmap_user_store::HashmapUserStore;
 pub  struct TestApp {
     pub address: String,
     pub http_client: reqwest::Client,

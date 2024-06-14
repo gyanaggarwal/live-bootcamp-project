@@ -3,10 +3,9 @@ use chrono::Utc;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Validation};
 use serde::{Deserialize, Serialize};
 
-//use crate::domain::email::Email;
 use crate::{app_state::BannedTokenStoreType, domain::email::Email};
 
-use super::constants::{JWT_COOKIE_NAME, TOKEN_TTL_SECONDS, JWT_SECRET};
+use super::constants::{JWT_COOKIE_NAME, TTL_SECONDS_I64, JWT_SECRET};
 // This is definitely NOT a good secret. We will update it soon!
 // const JWT_SECRET: &str = "secret";
 
@@ -38,7 +37,7 @@ fn create_auth_cookie(token: String) -> Cookie<'static> {
 }
 
 fn generate_auth_token(email: &Email) -> Result<String, GenerateTokenError> {
-    let delta = chrono::Duration::try_seconds(TOKEN_TTL_SECONDS)
+    let delta = chrono::Duration::try_seconds(TTL_SECONDS_I64)
         .ok_or(GenerateTokenError::UnexpectedError)?;
 
     // Create JWT expiration time
