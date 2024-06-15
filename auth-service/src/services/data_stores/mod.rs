@@ -10,4 +10,3 @@ pub mod redis_banned_token_store;
 
 pub mod redis_two_fa_store;
 
-pub mod redis_user_store;
