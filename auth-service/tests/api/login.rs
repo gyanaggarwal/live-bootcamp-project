@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use crate::helpers::TestApp;
 use auth_service::{utils::constants::JWT_COOKIE_NAME, ErrorResponse};
 /*

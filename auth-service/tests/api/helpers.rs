@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+#![allow(dead_code)]
 use auth_service::Application;
 use uuid::Uuid;
 use std::sync::Arc;

@@ -1,3 +1,6 @@
+#![allow(unused_imports)]
+#![allow(dead_code)]
+
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use dotenvy::dotenv;
@@ -11,13 +14,16 @@ use auth_service::{
                              redis_banned_token_store::RedisBannedTokenStore,
                              redis_two_fa_store::RedisTwoFACodeStore},
                mock_email_client::MockEmailClient}, 
-    utils::constants::{prod, DATABASE_URL, REDIS_HOST_NAME},
-    Application
+               utils::constants::{prod, DATABASE_URL, REDIS_HOST_NAME},
+//               utils::constants::{prod, REDIS_HOST_NAME},
+               Application
 };
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+//    let pg_pool = configure_postgresql().await;
+//    let user_store = Arc::new(RwLock::new(PostgresUserStore::new(pg_pool)));
     let redis_connection = Arc::new(RwLock::new(configure_redis()));
     let user_store = 
         Arc::new(RwLock::new(HashmapUserStore::default()));
