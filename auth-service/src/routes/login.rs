@@ -1,6 +1,7 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use axum_extra::extract::CookieJar;
 use serde::{Deserialize, Serialize};
+use secrecy::Secret;
 
 use crate::{
     app_state::AppState,
@@ -92,8 +93,8 @@ async fn handle_no_2fa(email: &Email, jar: CookieJar) ->
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
-    pub email: String,
-    pub password: String,
+    pub email: Secret<String>,
+    pub password: Secret<String>,
 }
     
 #[derive(Debug, Serialize, Deserialize)]

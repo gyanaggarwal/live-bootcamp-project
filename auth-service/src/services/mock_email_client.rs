@@ -1,4 +1,5 @@
 use color_eyre::eyre::Result;
+use secrecy::ExposeSecret;
 
 use crate::domain::{Email, EmailClient};
 
@@ -14,7 +15,7 @@ impl EmailClient for MockEmailClient {
         content: &str
     ) -> Result<()> {
         println!("Sending email to {} with subject: {} and content: {}",
-                 recipient.as_ref(), subject, content);
+                 recipient.as_ref().expose_secret(), subject, content);
         Ok(())
     }
 }

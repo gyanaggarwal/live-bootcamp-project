@@ -1,6 +1,8 @@
 use axum::{extract::State, response::IntoResponse, Json};
 use axum_extra::extract::CookieJar;
 use serde::Deserialize;
+use secrecy::Secret;
+
 use crate::{app_state::AppState,
             domain::{AuthAPIError, Email, LoginAttemptId, TwoFACode},
             utils::auth::generate_auth_cookie};
@@ -55,7 +57,7 @@ pub async fn verify_2fa(State(state): State<AppState>,
 
 #[derive(Deserialize)]
 pub struct Verify2FARequest {
-    email: String,
+    email: Secret<String>,
     #[serde(rename = "loginAttemptId")]
     login_attempt_id: String,
     #[serde(rename = "2FACode")]
