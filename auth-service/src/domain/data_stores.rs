@@ -1,3 +1,6 @@
+use color_eyre::eyre::Report;
+use thiserror::Error;
+
 use super::{Email, Password, User, LoginAttemptId, TwoFACode};
 
 #[async_trait::async_trait]
@@ -23,21 +26,50 @@ pub trait TwoFACodeStore {
     async fn delete_two_fa_code(&mut self, email: &Email) -> Result<(), TwoFACodeStoreError>;
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Error)]
 pub enum UserStoreError {
+    #[error("User already exists")]
     UserAlreadyExists,
+    #[error("User not found")]
     UserNotFound,
+    #[error("Invalid credentials")]
     InvalidCredentials,
+    #[error("Unexpected error")]
+    UnexpectedError(#[source] Report),
+}
+
+impl PartialEq for UserStoreError {
+    fn eq(&self, other: &Self) -> bool {
+        matches!(
+            (self, other),
+            (Self::UserAlreadyExists, Self::UserAlreadyExists)
+                | (Self::UserNotFound, Self::UserNotFound)
+                | (Self::InvalidCredentials, Self::InvalidCredentials)
+                | (Self::UnexpectedError(_), Self::UnexpectedError(_))
+        )
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum BannedTokenStoreError {
+    #[error("Unexpected error")]
+    UnexpectedError(#[source] Report),
+}
+
+#[derive(Debug, Error)]
+pub enum TwoFACodeStoreError {
+    #[error("LoginAttemptNotFound")]
+    LoginAttemptIdNotFound,
+    #[error("Unexpected error")]
     UnexpectedError,
 }
 
-#[derive(Debug)]
-pub enum BannedTokenStoreError {
-    UnexpectedError
-}
-
-#[derive(Debug)]
-pub enum TwoFACodeStoreError {
-    LoginAttamptIdNotFound,
-    UnexpectedError
+impl PartialEq for TwoFACodeStoreError {
+    fn eq(&self, other: &Self) -> bool {
+        matches!(
+            (self, other),
+            (Self::LoginAttemptIdNotFound, Self::LoginAttemptIdNotFound)
+                | (Self::UnexpectedError, Self::UnexpectedError)
+        )
+    }
 }

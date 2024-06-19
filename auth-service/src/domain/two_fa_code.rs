@@ -1,7 +1,6 @@
 use rand::prelude::*;
 use serde::{Deserialize, Serialize};
-
-use super::AuthAPIError;
+use color_eyre::eyre::{eyre, Context, Result};
 
 const LOW_RANGE_VALUE:u32 = 100000;
 const HIGH_RANGE_VALUE:u32 = 999999;
@@ -10,18 +9,15 @@ const HIGH_RANGE_VALUE:u32 = 999999;
 pub struct TwoFACode(String);
 
 impl TwoFACode {
-    pub fn parse(code: String) -> Result<Self, AuthAPIError> {
-        if code.chars().count() != 6 {
-            return Err(AuthAPIError::Invalid2FACode)
-        }
+    pub fn parse(code: String) -> Result<Self> {
 
         let code_as_u32 = code
                                     .parse::<u32>()
-                                    .map_err(|_| AuthAPIError::Invalid2FACode)?;
+                                    .wrap_err("Invalid 2FA code")?;
         if (LOW_RANGE_VALUE..=HIGH_RANGE_VALUE).contains(&code_as_u32) {
             Ok(Self(code))
         } else {
-            Err(AuthAPIError::Invalid2FACode)
+            Err(eyre!("Invalid 2FA code"))
         }
     }
 }

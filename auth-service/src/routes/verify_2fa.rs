@@ -5,6 +5,7 @@ use crate::{app_state::AppState,
             domain::{AuthAPIError, Email, LoginAttemptId, TwoFACode},
             utils::auth::generate_auth_cookie};
 
+#[tracing::instrument(name = "verify_2fa", skip_all)]
 pub async fn verify_2fa(State(state): State<AppState>,
                         jar: CookieJar,
                         Json(request): Json<Verify2FARequest>) -> 
@@ -45,7 +46,7 @@ pub async fn verify_2fa(State(state): State<AppState>,
     let result = generate_auth_cookie(&email);
     let auth_cookie = match result {
         Ok(cookie) => cookie,
-        Err(_) =>  return (jar, Err(AuthAPIError::UnexpectedError))
+        Err(e) =>  return (jar, Err(AuthAPIError::UnexpectedError(e.into())))
     };
 
     let updated_jar = jar.add(auth_cookie);

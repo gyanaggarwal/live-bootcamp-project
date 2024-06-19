@@ -1,15 +1,13 @@
-//use uuid::Uuid;
 use serde::{Deserialize, Serialize};
-
-use super::AuthAPIError;
+use color_eyre::eyre::{Context, Result};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LoginAttemptId(String);
 
 impl LoginAttemptId {
-    pub fn parse(id: String) -> Result<Self, AuthAPIError> {
+    pub fn parse(id: String) -> Result<Self> {
         let parsed_id =
-            uuid::Uuid::parse_str(&id).map_err(|_| AuthAPIError::InvalidLoginAttamptId)?;
+            uuid::Uuid::parse_str(&id).wrap_err("Invalid login attempt id")?;
         Ok(Self(parsed_id.to_string()))
     }
 }

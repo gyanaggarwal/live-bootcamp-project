@@ -14,14 +14,16 @@ use auth_service::{
                              redis_banned_token_store::RedisBannedTokenStore,
                              redis_two_fa_store::RedisTwoFACodeStore},
                mock_email_client::MockEmailClient}, 
+               utils::tracing::init_tracing,
                utils::constants::{prod, DATABASE_URL, REDIS_HOST_NAME},
-//               utils::constants::{prod, REDIS_HOST_NAME},
                Application
 };
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+    color_eyre::install().expect("Failed to install color_eyre");
+    init_tracing().expect("Failed to initialize tracing");
 //    let pg_pool = configure_postgresql().await;
 //    let user_store = Arc::new(RwLock::new(PostgresUserStore::new(pg_pool)));
     let redis_connection = Arc::new(RwLock::new(configure_redis()));

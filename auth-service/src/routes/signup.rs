@@ -8,6 +8,7 @@ use crate::{
 
 use crate::routes::RouteResponse;
 
+#[tracing::instrument(name = "Signup", skip_all)]
 pub async fn signup(State(state): State<AppState>,
                     Json(request): Json<SignupRequest>) -> 
                     Result<impl IntoResponse, AuthAPIError> {
@@ -24,8 +25,8 @@ pub async fn signup(State(state): State<AppState>,
         return Err(AuthAPIError::UserAlreadyExists);
     }
 
-    if user_store.add_user(user).await.is_err() {
-        return Err(AuthAPIError::UnexpectedError);
+    if let Err(e) = user_store.add_user(user).await {
+        return Err(AuthAPIError::UnexpectedError(e.into()));
     }
 
     let response = Json(RouteResponse {

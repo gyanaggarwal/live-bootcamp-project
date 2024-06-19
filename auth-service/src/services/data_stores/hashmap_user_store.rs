@@ -9,6 +9,7 @@ pub struct HashmapUserStore {
 
 #[async_trait::async_trait]
 impl UserStore for HashmapUserStore {
+    #[tracing::instrument(name = "Adding user to HashmapUserStore", skip_all)]
     async fn add_user(&mut self, user: User) -> Result<(), UserStoreError> {
         if self.users.contains_key(&user.email) {
             return Err(UserStoreError::UserAlreadyExists);
@@ -17,6 +18,7 @@ impl UserStore for HashmapUserStore {
         Ok(())
     }
 
+    #[tracing::instrument(name = "Retrieving user from HashmapUserStore", skip_all)] 
     async fn get_user(&self, email: &Email) -> Result<User, UserStoreError> {
         match self.users.get(email) {
             Some(user) => Ok(user.clone()),
@@ -24,6 +26,7 @@ impl UserStore for HashmapUserStore {
         }
     }
 
+    #[tracing::instrument(name = "Validating user credentials in HashmapUserStore", skip_all)]
     async fn validate_user(&self,
                            email: &Email,
                            password: &Password) -> Result<(), UserStoreError> {
