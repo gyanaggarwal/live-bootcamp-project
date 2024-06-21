@@ -62,8 +62,6 @@ async fn handle_2fa(email: &Email, state: &AppState, jar: CookieJar) ->
     }
 
     if let Err(e) = state.email_client
-        .read()
-        .await
         .send_email(email, "2fa_code", two_fa_code.as_ref().expose_secret())
         .await
     {
