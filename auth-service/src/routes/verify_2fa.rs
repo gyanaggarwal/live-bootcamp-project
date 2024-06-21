@@ -59,7 +59,7 @@ pub async fn verify_2fa(State(state): State<AppState>,
 pub struct Verify2FARequest {
     email: Secret<String>,
     #[serde(rename = "loginAttemptId")]
-    login_attempt_id: String,
+    login_attempt_id: Secret<String>,
     #[serde(rename = "2FACode")]
-    two_fa_code: String
+    two_fa_code: Secret<String>
 }

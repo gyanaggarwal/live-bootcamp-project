@@ -5,6 +5,7 @@ use secrecy::ExposeSecret;
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 use color_eyre::eyre::Context;
+use secrecy::Secret;
 
 use crate::domain::{Email, LoginAttemptId, TwoFACode, TwoFACodeStore, TwoFACodeStoreError};
 use crate::utils::constants::TTL_SECONDS_U64;
@@ -37,8 +38,8 @@ impl TwoFACodeStore for RedisTwoFACodeStore {
         let key = get_key(&email);
 
         let data = TwoFATuple(
-            login_attempt_id.as_ref().to_owned(),
-            code.as_ref().to_owned(),
+            login_attempt_id.as_ref().expose_secret().to_owned(),
+            code.as_ref().expose_secret().to_owned(),
         );
         let serialized_data = serde_json::to_string(&data)
                 .wrap_err("failed to serialize 2FA tuple")
@@ -81,11 +82,11 @@ impl TwoFACodeStore for RedisTwoFACodeStore {
                         .wrap_err("failed to deserialize 2FA tuple")
                         .map_err(|_| TwoFACodeStoreError::UnexpectedError)?;
     
-                    let login_attempt_id = LoginAttemptId::parse(data.0)
+                    let login_attempt_id = LoginAttemptId::parse(Secret::new(data.0))
                         .wrap_err("failed to parse login_attempt_id")
                         .map_err(|_| TwoFACodeStoreError::UnexpectedError)?;
     
-                    let email_code = TwoFACode::parse(data.1)
+                    let email_code = TwoFACode::parse(Secret::new(data.1))
                         .wrap_err("failed to parse email_code")
                         .map_err(|_| TwoFACodeStoreError::UnexpectedError)?;
     

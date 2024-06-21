@@ -1,7 +1,7 @@
 use axum_extra::extract::cookie::{Cookie, SameSite};
 use chrono::Utc;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Validation};
-use secrecy::ExposeSecret;
+use secrecy::{ExposeSecret, Secret};
 use serde::{Deserialize, Serialize};
 use color_eyre::eyre::{eyre, Context, ContextCompat, Result};
 
@@ -57,7 +57,7 @@ fn generate_auth_token(email: &Email) -> Result<String> {
 #[tracing::instrument(name = "validate_token", skip_all)]
 pub async fn validate_token(token: &str,
     banned_token_store: BannedTokenStoreType) -> Result<Claims> {
-    match banned_token_store.read().await.is_banned_token(token).await {
+    match banned_token_store.read().await.is_banned_token(&Secret::new(token.to_owned())).await {
         Ok(value) => {
             if value {
                 return Err(eyre!("token is banned"));
@@ -68,7 +68,7 @@ pub async fn validate_token(token: &str,
 
     decode::<Claims>(
         token,
-        &DecodingKey::from_secret(JWT_SECRET.as_bytes()),
+        &DecodingKey::from_secret(JWT_SECRET.expose_secret().as_bytes()),
         &Validation::default(),
     )
     .map(|data| data.claims)
@@ -80,7 +80,7 @@ fn create_token(claims: &Claims) -> Result<String> {
     encode(
         &jsonwebtoken::Header::default(),
         &claims,
-        &EncodingKey::from_secret(JWT_SECRET.as_bytes()),
+        &EncodingKey::from_secret(JWT_SECRET.expose_secret().as_bytes()),
     )
     .wrap_err("failed to create token")
 }

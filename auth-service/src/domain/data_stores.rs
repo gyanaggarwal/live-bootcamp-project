@@ -1,5 +1,6 @@
 use color_eyre::eyre::Report;
 use thiserror::Error;
+use secrecy::Secret;
 
 use super::{Email, Password, User, LoginAttemptId, TwoFACode};
 
@@ -12,8 +13,8 @@ pub trait UserStore {
 
 #[async_trait::async_trait]
 pub trait BannedTokenStore {
-    async fn add_banned_token(&mut self, token: String) -> Result<(), BannedTokenStoreError>;
-    async fn is_banned_token(&self, token: &str) -> Result<bool, BannedTokenStoreError>;
+    async fn add_banned_token(&mut self, token: Secret<String>) -> Result<(), BannedTokenStoreError>;
+    async fn is_banned_token(&self, token: &Secret<String>) -> Result<bool, BannedTokenStoreError>;
 }
 
 #[async_trait::async_trait]

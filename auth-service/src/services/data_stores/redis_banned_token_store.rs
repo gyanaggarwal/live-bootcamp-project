@@ -3,6 +3,7 @@ use std::sync::Arc;
 use redis::{Commands, Connection};
 use tokio::sync::RwLock;
 use color_eyre::eyre::Context;
+use secrecy::{Secret, ExposeSecret};
 
 use crate::{
     domain::data_stores::{BannedTokenStore, BannedTokenStoreError},
@@ -23,8 +24,8 @@ impl RedisBannedTokenStore {
 #[async_trait::async_trait]
 impl BannedTokenStore for RedisBannedTokenStore {
     #[tracing::instrument(name = "add_banned_token", skip_all)]
-    async fn add_banned_token(&mut self, token: String) -> Result<(), BannedTokenStoreError> {
-        let token_key = get_key(token.as_str());
+    async fn add_banned_token(&mut self, token: Secret<String>) -> Result<(), BannedTokenStoreError> {
+        let token_key = get_key(token.expose_secret());
         let ttl: u64 = TTL_SECONDS_I64
         .try_into()
         .wrap_err("failed to cast TOKEN_TTL_SECONDS to u64") // New!
@@ -41,8 +42,8 @@ impl BannedTokenStore for RedisBannedTokenStore {
     }
 
     #[tracing::instrument(name = "is_banned_token", skip_all)]
-    async fn is_banned_token(&self, token: &str) -> Result<bool, BannedTokenStoreError> {
-        let token_key = get_key(token);
+    async fn is_banned_token(&self, token: &Secret<String>) -> Result<bool, BannedTokenStoreError> {
+        let token_key = get_key(token.expose_secret());
         let is_banned: bool = self
             .conn
             .write()
