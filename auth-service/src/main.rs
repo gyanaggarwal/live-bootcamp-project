@@ -37,8 +37,8 @@ async fn main() {
         redis_connection.clone()
     )));
     let two_fa_code_store = Arc::new(RwLock::new(RedisTwoFACodeStore::new(redis_connection)));
-//    let email_client = Arc::new(configure_postmark_email_client()); 
-    let email_client = Arc::new(MockEmailClient::default());
+    let email_client = Arc::new(configure_postmark_email_client()); 
+//    let email_client = Arc::new(MockEmailClient::default());
     
     let app_state = AppState::new(user_store, 
                                             banned_token_store, 
